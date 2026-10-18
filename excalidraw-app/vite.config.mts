@@ -93,6 +93,7 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       outDir: "build",
+      reportCompressedSize: false,
       rollupOptions: {
         output: {
           assetFileNames(chunkInfo) {
@@ -127,7 +128,7 @@ export default defineConfig(({ mode }) => {
           },
         },
       },
-      sourcemap: true,
+      sourcemap: false,
       // don't auto-inline small assets (i.e. fonts hosted on CDN)
       assetsInlineLimit: 0,
     },

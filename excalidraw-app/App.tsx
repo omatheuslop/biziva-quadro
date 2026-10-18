@@ -80,6 +80,7 @@ import type { ResolutionType } from "@excalidraw/common/utility-types";
 import type { ResolvablePromise } from "@excalidraw/common/utils";
 
 import CustomStats from "./CustomStats";
+import BizivaAssistant from "./biziva/BizivaAssistant";
 import {
   Provider,
   useAtom,
@@ -376,7 +377,7 @@ const ExcalidrawWrapper = () => {
   const excalidrawAPI = useExcalidrawAPI();
 
   const [errorMessage, setErrorMessage] = useState("");
-  const isCollabDisabled = isRunningInIframe();
+  const isCollabDisabled = isRunningInIframe() || import.meta.env.VITE_BIZIVA_ENABLE_COLLAB !== "true";
 
   const { editorTheme, appTheme, setAppTheme } = useHandleAppTheme();
 
@@ -945,6 +946,7 @@ const ExcalidrawWrapper = () => {
         "is-collaborating": isCollaborating,
       })}
     >
+      <BizivaAssistant api={excalidrawAPI} />
       <Excalidraw
         viewportStatusFrame={viewportStatusFrame}
         userToFollow={userToFollow}
@@ -957,8 +959,8 @@ const ExcalidrawWrapper = () => {
           canvasActions: {
             toggleTheme: true,
             export: {
-              onExportToBackend,
-              renderCustomUI: excalidrawAPI
+              onExportToBackend: isCollabDisabled ? undefined : onExportToBackend,
+              renderCustomUI: excalidrawAPI && !isCollabDisabled
                 ? (elements, appState, files) => {
                     return (
                       <ExportToExcalidrawPlus
@@ -1059,9 +1061,9 @@ const ExcalidrawWrapper = () => {
           )}
         </OverwriteConfirmDialog>
         <AppFooter onChange={() => excalidrawAPI?.refresh()} />
-        {excalidrawAPI && <AIComponents excalidrawAPI={excalidrawAPI} />}
+        {excalidrawAPI && import.meta.env.VITE_BIZIVA_ENABLE_UPSTREAM_AI === "true" && <AIComponents excalidrawAPI={excalidrawAPI} />}
 
-        <TTDDialogTrigger />
+        {import.meta.env.VITE_BIZIVA_ENABLE_UPSTREAM_AI === "true" && <TTDDialogTrigger />}
         {isCollaborating && isOffline && (
           <div className="alertalert--warning">
             {t("alerts.collabOfflineWarning")}

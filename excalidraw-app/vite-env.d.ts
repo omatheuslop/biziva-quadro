@@ -2,6 +2,8 @@
 /// <reference types="vite-plugin-pwa/info" />
 /// <reference types="vite-plugin-svgr/client" />
 interface ImportMetaEnv {
+  VITE_BIZIVA_ENABLE_COLLAB?: string;
+  VITE_BIZIVA_ENABLE_UPSTREAM_AI?: string;
   // The port to run the dev server
   VITE_APP_PORT: string;
 
